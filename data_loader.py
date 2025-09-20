@@ -2,6 +2,7 @@ from datetime import datetime
 from distutils.util import strtobool
 
 import pandas as pd
+from tqdm import tqdm
 
 
 # Converts the contents in a .tsf file into a dataframe and returns it along with other meta-data of the dataset: frequency, horizon, whether the dataset contains missing values and whether the series have equal lengths
@@ -28,7 +29,7 @@ def convert_tsf_to_dataframe(
     started_reading_data_section = False
 
     with open(full_file_path_and_name, "r", encoding="utf8") as file:
-        for line in file:
+        for line in tqdm(file):
             # Strip white space from start/end of line
             line = line.strip()
 
@@ -113,7 +114,7 @@ def convert_tsf_to_dataframe(
                             )
 
                         # all_series.append(pd.Series(numeric_series).array)
-                        all_series.append(numeric_series)
+                        all_series.append(pd.Series(numeric_series).array)
 
                         for i in range(len(col_names)):
                             att_val = None
@@ -146,7 +147,6 @@ def convert_tsf_to_dataframe(
 
         all_data[value_column_name] = all_series
         loaded_data = pd.DataFrame(all_data)
-        loaded_data = loaded_data.explode(value_column_name).reset_index(drop=True)
 
         return (
             loaded_data,
