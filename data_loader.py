@@ -113,7 +113,6 @@ def convert_tsf_to_dataframe(
                                 "All series values are missing. A given series should contains a set of comma separated numeric values. At least one numeric value should be there in a series."
                             )
 
-                        # all_series.append(pd.Series(numeric_series).array)
                         all_series.append(pd.Series(numeric_series).array)
 
                         for i in range(len(col_names)):

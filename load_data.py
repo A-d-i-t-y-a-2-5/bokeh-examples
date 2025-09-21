@@ -10,6 +10,4 @@ print(df.head())
 print(df.info())
 print(frequency, forecast_horizon, contain_missing_values, contain_equal_length)
 
-df.to_csv(
-    "data/processed/web_traffic_extended_dataset_with_missing_values.csv", index=False
-)
+df.to_pickle("data/processed/web_traffic.pkl")
