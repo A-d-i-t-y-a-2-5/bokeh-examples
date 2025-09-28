@@ -1,5 +1,4 @@
 import argparse
-from cProfile import label
 import os
 
 from bokeh.plotting import show
@@ -41,23 +40,33 @@ def main():
     )
 
     dates = df.index
-    curve = hv.Curve((dates, df.iloc[:, 0]), label=df.columns[0])
-    curve.opts(
-        line_width=1,
-        tools=["xwheel_zoom"],
-        line_alpha=0.8,
-        hover_tooltips=[
-            ("Series", "$label"),
-            ("Time", "$x{%F %T}"),
-            ("Value", "$y{0.00}"),
-        ],
-        hover_formatters={"$x": "datetime"},
+    curves = []
+    for i, (series_name, series_data) in enumerate(df.items()):
+        curve = hv.Curve((dates, series_data), label=series_name)
+        curve.opts(
+            line_width=1,
+            tools=["xwheel_zoom"],
+            line_alpha=0.8,
+            hover_tooltips=[
+                ("Series", "$label"),
+                ("Time", "$x{%F %T}"),
+                ("Value", "$y{0.00}"),
+            ],
+            hover_formatters={"$x": "datetime"},
+        )
+        curves.append(curve)
+
+    curves_overlay = hv.Overlay(curves).opts(
+        title="Web Traffic Data",
+        xlabel="Time",
+        ylabel="Number of Requests",
+        responsive=True,
+        show_legend=True,
     )
-    bokeh_plot = hv.render(curve, backend="bokeh")
+
+    bokeh_plot = hv.render(curves_overlay, backend="bokeh")
     bokeh_plot.sizing_mode = "stretch_both"
     show(bokeh_plot)
-
-    # rasterize(curve, width=800, line_width=3, pixel_ratio=2).opts(width=800, cmap=['lightblue','blue'])
 
 
 if __name__ == "__main__":
